@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { LoginSchema } from '@/index';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,26 +18,36 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import CardWrapper from '@/components/auth/card-wrapper';
-
-export const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1, 'Password is required'),
-});
-
-async function onSubmit(values: z.infer<typeof loginSchema>) {}
+import FormError from '@/components/form-error';
+import FormSuccess from '@/components/form-success';
 
 const LoginPage = () => {
-  const form = useForm<z.infer<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
+  const [success, setSuccess] = useState<string | undefined>('');
+  const [error, setError] = useState<string | undefined>('');
+  const [isPending, startTransition] = useTransition();
+
+  const form = useForm<z.infer<typeof LoginSchema>>({
+    resolver: zodResolver(LoginSchema),
     defaultValues: {
       email: '',
       password: '',
     },
   });
 
+  function onSubmit(values: z.infer<typeof LoginSchema>) {
+    // setError('');
+    // setSuccess('');
+    // startTransition(() => {
+    //   login(values).then(data => {
+    //     setError(data.error);
+    //     setSuccess(data.success);
+    //   });
+    // });
+  }
+
   return (
     <CardWrapper
-      className="w-[360px]"
+      className="w-[400px]"
       headerLabel="Login"
       backButtonLabel="Create an account"
       backButtonHref="/auth/signup"
@@ -50,7 +61,7 @@ const LoginPage = () => {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input type="email" {...field} />
+                  <Input type="email" {...field} disabled={isPending} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -63,13 +74,15 @@ const LoginPage = () => {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input type="password" {...field} />
+                  <Input type="password" {...field} disabled={isPending} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full">
+          <FormError message={error} />
+          <FormSuccess message={success} />
+          <Button type="submit" className="w-full" disabled={isPending}>
             Login
           </Button>
         </form>

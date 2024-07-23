@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { SignupSchema } from '@/index';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,24 +18,16 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import CardWrapper from '@/components/auth/card-wrapper';
-
-export const signupSchema = z
-  .object({
-    name: z.string().min(1, 'Name is required'),
-    email: z.string().email(),
-    password: z.string().min(8),
-    confirmPassword: z.string().min(8),
-  })
-  .refine(data => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
-  });
-
-async function onSubmit(values: z.infer<typeof signupSchema>) {}
+import FormError from '@/components/form-error';
+import FormSuccess from '@/components/form-success';
 
 const SignupPage = () => {
-  const form = useForm<z.infer<typeof signupSchema>>({
-    resolver: zodResolver(signupSchema),
+  const [success, setSuccess] = useState<string | undefined>('');
+  const [error, setError] = useState<string | undefined>('');
+  const [isPending, startTransition] = useTransition();
+
+  const form = useForm<z.infer<typeof SignupSchema>>({
+    resolver: zodResolver(SignupSchema),
     defaultValues: {
       name: '',
       email: '',
@@ -42,6 +35,17 @@ const SignupPage = () => {
       confirmPassword: '',
     },
   });
+
+  function onSubmit(values: z.infer<typeof SignupSchema>) {
+    // setSuccess('');
+    // setError('');
+    // startTransition(() => {
+    //   signup(values).then(data => {
+    //     setError(data.error);
+    //     setSuccess(data.success);
+    //   });
+    // });
+  }
 
   return (
     <CardWrapper
@@ -72,7 +76,7 @@ const SignupPage = () => {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input type="email" {...field} />
+                  <Input type="email" {...field} disabled={isPending} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -85,7 +89,7 @@ const SignupPage = () => {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input type="password" {...field} />
+                  <Input type="password" {...field} disabled={isPending} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -98,13 +102,15 @@ const SignupPage = () => {
               <FormItem>
                 <FormLabel>Confirm Password</FormLabel>
                 <FormControl>
-                  <Input type="password" {...field} />
+                  <Input type="password" {...field} disabled={isPending} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full">
+          <FormError message={error} />
+          <FormSuccess message={success} />
+          <Button type="submit" className="w-full" disabled={isPending}>
             Signup
           </Button>
         </form>

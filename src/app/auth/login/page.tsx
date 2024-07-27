@@ -47,7 +47,6 @@ const LoginPage = () => {
 
   return (
     <CardWrapper
-      className="w-[400px]"
       headerLabel="Login"
       backButtonLabel="Create an account"
       backButtonHref="/auth/signup"

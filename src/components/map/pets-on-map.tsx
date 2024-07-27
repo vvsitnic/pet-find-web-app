@@ -6,6 +6,8 @@ import { AdvancedMarker, Map } from '@vis.gl/react-google-maps';
 import { useDebounce, useCoords } from '@/hooks';
 
 import { Pet } from '@/pets';
+import { useToast } from '../ui/use-toast';
+import { ToastAction } from '../ui/toast';
 
 interface Bounds {
   north: number;
@@ -55,7 +57,8 @@ const boundsOverflow = (boundsChild: Bounds, boundsParent: Bounds): boolean => {
 export default function PetsOnMap() {
   const [petsBounds, setPetsBounds] = useState<Bounds | null>(null);
   const [pets, setPets] = useState<Pet[]>([]);
-  const { coords, isLoading } = useCoords();
+  const { coords, isLoading, isError } = useCoords();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (!petsBounds) {
@@ -66,18 +69,35 @@ export default function PetsOnMap() {
       return;
     }
     const fetchPets = async () => {
-      const response = await fetch(
-        `http://localhost:2000/pets/on-map?bllat=${petsBounds.south}&bllng=${petsBounds.west}&urlat=${petsBounds.north}&urlng=${petsBounds.east}`
-      );
+      try {
+        const response = await fetch(
+          `http://localhost:2000/pets/on-map?bllat=${petsBounds.south}&bllng=${petsBounds.west}&urlat=${petsBounds.north}&urlng=${petsBounds.east}`
+        );
 
-      if (response.ok) {
         const data = await response.json();
         console.log(data);
         setPets(data);
+      } catch (error) {
+        toast({
+          variant: 'destructive',
+          title: 'Uh oh! Something went wrong.',
+          description: 'There was a problem fetching pets.',
+          action: <ToastAction altText="Try again">Try again</ToastAction>,
+        });
       }
     };
     fetchPets();
   }, [petsBounds, coords]);
+
+  useEffect(() => {
+    if (isError) {
+      toast({
+        variant: 'destructive',
+        title: 'Uh oh!',
+        description: 'Allow geolocation to see most relevant data.',
+      });
+    }
+  }, [isError]);
 
   const changeBounds = useDebounce((_, bounds: Bounds) => {
     if (!petsBounds) return;

@@ -49,7 +49,6 @@ const SignupPage = () => {
 
   return (
     <CardWrapper
-      className="w-[400px]"
       headerLabel="Signup"
       backButtonLabel="Already have an account"
       backButtonHref="/auth/login"

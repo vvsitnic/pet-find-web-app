@@ -56,7 +56,7 @@ const NavigationBar = () => {
             icon={<PlusCircleIcon className="size-7" />}
           />
           <NavItem
-            href="/account"
+            href="/auth/login"
             label="My account"
             icon={<UserCircleIcon className="size-7" />}
           />

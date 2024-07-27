@@ -1,11 +1,19 @@
+'use client';
+
 import { useMap, useMapsLibrary } from '@vis.gl/react-google-maps';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-export default function PlaceAutocomplete({
+const PlaceAutocompleteInput = ({
   coords,
+  setProgrammaticallyChangedTrue,
+  setProgrammaticallyChangedFalse,
+  programmaticallyChanged,
 }: {
   coords: { lng: number; lat: number } | null;
-}) {
+  setProgrammaticallyChangedTrue: () => void;
+  setProgrammaticallyChangedFalse: () => void;
+  programmaticallyChanged: boolean;
+}) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [placeAutocomplete, setPlaceAutocomplete] = useState<any>(null);
 
@@ -20,8 +28,14 @@ export default function PlaceAutocomplete({
 
   // When coords change
   useEffect(() => {
-    console.log(1);
     if (!geocoder || !map || !coords) return;
+
+    if (programmaticallyChanged) {
+      setProgrammaticallyChangedFalse();
+      return;
+    }
+
+    console.log(1);
 
     geocoder
       .geocode({ location: coords })
@@ -51,7 +65,7 @@ export default function PlaceAutocomplete({
     setPlaceAutocomplete(new placesLib.Autocomplete(inputRef.current, options));
   }, [inputRef, placesLib]);
 
-  // When place was selected
+  // Add on place selected listener
   useEffect(() => {
     if (!placeAutocomplete || !map) return;
 
@@ -60,20 +74,18 @@ export default function PlaceAutocomplete({
 
       if (!place.geometry) return;
 
+      setProgrammaticallyChangedTrue();
       map.fitBounds(place.geometry.viewport);
     });
   }, [map, placeAutocomplete]);
 
   return (
-    <>
-      <label htmlFor="place-autocomplete" className="block text-2xl mb-1">
-        Select last seen location
-      </label>
-      <input
-        className="w-full text-lg p-2 rounded-t-lg border border-[#7e7e7e]"
-        ref={inputRef}
-        id="place-autocomplete"
-      />
-    </>
+    <input
+      className="border rounded-t-lg block p-2 text-2xl w-full"
+      ref={inputRef}
+      id="place-autocomplete"
+    />
   );
-}
+};
+
+export default PlaceAutocompleteInput;

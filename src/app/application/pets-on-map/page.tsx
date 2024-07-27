@@ -1,7 +1,18 @@
 import React from 'react';
 
-const Page = () => {
-  return <div></div>;
+import MapApiProvider from '@/components/map/map-api-provider';
+import PetsOnMap from '@/components/map/pets-on-map';
+
+const PetsOnMapPage = () => {
+  return (
+    <div className="w-full h-full p-4">
+      <div className="w-full h-full rounded-md overflow-hidden">
+        <MapApiProvider>
+          <PetsOnMap />
+        </MapApiProvider>
+      </div>
+    </div>
+  );
 };
 
-export default Page;
+export default PetsOnMapPage;

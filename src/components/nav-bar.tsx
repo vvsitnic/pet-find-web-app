@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -12,13 +13,30 @@ import {
 } from '@heroicons/react/24/outline';
 
 import { cn } from '@/lib/utils';
-import Image from 'next/image';
 
 const NavigationBar = () => {
   return (
-    <header className="h-screen w-fit p-4 xl:w-[400px] flex flex-col border-r-[1px] border-[#d8d8d8]">
-      <Link href="/" className="text-7xl text-center mb-4 hidden xl:block">
-        PetFind
+    <header className="h-screen w-fit p-4 xl:w-[400px] flex flex-col shrink-0 border-r-[1px] border-[#d8d8d8]">
+      <Link
+        href="/"
+        className="flex items-center justify-center mt-2 mb-4 h-[70px]"
+      >
+        <Image
+          height={70}
+          width={335}
+          src="/petfind-logo.png"
+          alt="PetFind Logo"
+          className="hidden xl:block"
+          priority
+        />
+        <Image
+          height={60}
+          width={60}
+          src="/petfind-icon-small.png"
+          alt="PetFind Logo"
+          className="block xl:hidden"
+          priority
+        />
       </Link>
       <nav className="grow">
         <ul className="list-none h-full flex flex-col gap-2">
@@ -33,7 +51,7 @@ const NavigationBar = () => {
             icon={<MapIcon className="size-7" />}
           />{' '}
           <NavItem
-            href="/application/post"
+            href="/application/post-pet"
             label="Post pet"
             icon={<PlusCircleIcon className="size-7" />}
           />

@@ -110,7 +110,11 @@ const SignupPage = () => {
           />
           <FormError message={error} />
           <FormSuccess message={success} />
-          <Button type="submit" className="w-full" disabled={isPending}>
+          <Button
+            type="submit"
+            className="w-full bg-[#8a2be2] hover:bg-[#a155e8]"
+            disabled={isPending}
+          >
             Signup
           </Button>
         </form>

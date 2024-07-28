@@ -17,12 +17,27 @@ export default function SelectPlaceMap({
 }) {
   const latRef = useRef<HTMLInputElement>(null);
   const lngRef = useRef<HTMLInputElement>(null);
-  const { coords, isLoading } = useCoords();
+  const { coords, isLoading, isError } = useCoords();
   const [currentCoords, setCurrentCoords] = useState<{
     lat: number;
     lng: number;
   } | null>(null);
   const [programmaticallyChanged, setProgrammaticallyChanged] = useState(false);
+
+  useEffect(() => {
+    if (!coords) return;
+
+    setCurrentCoords(coords);
+  }, [coords]);
+
+  useEffect(() => {
+    if (!isError) return;
+
+    setCurrentCoords({
+      lat: 51.5074,
+      lng: -0.1278,
+    });
+  }, [isError]);
 
   useEffect(() => {
     if (!latRef.current || !lngRef.current || !currentCoords) return;
@@ -35,7 +50,7 @@ export default function SelectPlaceMap({
     setCurrentCoords(center);
   }, 700);
 
-  if (isLoading) {
+  if (!currentCoords) {
     return <p>Please wait...</p>;
   }
 
@@ -60,26 +75,25 @@ export default function SelectPlaceMap({
           <img
             src="/map-marker.png"
             className="h-14 absolute z-50 bottom-1/2 right-1/2 translate-x-1/2 pointer-events-none"
-          ></img>
+          />
+          <div className="h-1 w-4 bg-black/80 blur-[2px] rounded-[100%] absolute z-40 bottom-1/2 right-1/2 translate-x-1/2 translate-y-1/2 pointer-events-none" />
           <Map
             style={{ width: mapWidth, height: mapHeight }}
             mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_ID}
             defaultZoom={13}
-            defaultCenter={
-              coords || {
-                lat: 51.5074,
-                lng: -0.1278,
-              }
-            }
+            defaultCenter={currentCoords}
             disableDefaultUI={true}
             clickableIcons={false}
             onCenterChanged={e => {
+              console.log('MAP CENTER CHANGED');
+
               const { center } = e.detail;
               onCenterChanged(center);
             }}
           ></Map>
         </div>
       </MapApiProvider>
+      {/* These inputs are for form to retrieve on submit */}
       <input
         className="hidden"
         name="coords_lat"

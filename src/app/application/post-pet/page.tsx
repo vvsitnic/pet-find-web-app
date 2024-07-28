@@ -1,5 +1,6 @@
 'use client';
 
+import ImageSelector from '@/components/image-selector';
 import SelectPlaceMap from '@/components/map/select-place-map';
 import React from 'react';
 
@@ -16,19 +17,19 @@ const PostPetPage = () => {
       }}
     >
       <div className="mb-8">
-        <label htmlFor="name" className="text-3xl block mb-2">
+        <label htmlFor="name" className="text-2xl block mb-2 font-bold">
           Pet name
         </label>
         <input
           id="name"
           name="name"
           type="text"
-          className="border rounded-lg block p-2 text-4xl w-full"
+          className="border rounded-lg block p-2 text-2xl w-full"
           required
         />
       </div>
       <div className="mb-8">
-        <label htmlFor="description" className="text-3xl block mb-2">
+        <label htmlFor="description" className="text-2xl block mb-2 font-bold">
           Description
         </label>
         <textarea
@@ -39,29 +40,16 @@ const PostPetPage = () => {
         />
       </div>
       <div className="mb-8">
-        <label htmlFor="image" className="text-3xl block mb-2">
+        <label htmlFor="image" className="text-2xl block mb-2 font-bold">
           Pet image
         </label>
-        <label
-          htmlFor="image"
-          className="cursor-pointer border rounded-lg flex flex-col justify-center items-center h-44 w-full hover:bg-[#f5f0ff] transition-colors"
-        >
-          <p className="font-semibold mb-2 text-sm text-gray-500 dark:text-gray-400">
-            Click to upload
-          </p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">PNG, JPG</p>
-          <input
-            id="image"
-            name="image"
-            type="file"
-            className="hidden"
-            accept="image/png, image/jpeg"
-            required
-          />
-        </label>
+        <ImageSelector />
       </div>
       <div className="mb-8">
-        <label htmlFor="last-seen-date" className="text-3xl block mb-2">
+        <label
+          htmlFor="last-seen-date"
+          className="text-2xl block mb-2 font-bold"
+        >
           Pet last seen date
         </label>
         <input
@@ -73,7 +61,10 @@ const PostPetPage = () => {
         />
       </div>
       <div className="mb-8">
-        <label htmlFor="last-seen-location" className="text-3xl block mb-2">
+        <label
+          htmlFor="last-seen-location"
+          className="text-2xl block mb-2 font-bold"
+        >
           Last seen location
         </label>
         <SelectPlaceMap mapWidth="100%" mapHeight="450px" />

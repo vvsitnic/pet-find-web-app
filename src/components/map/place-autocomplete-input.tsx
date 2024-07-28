@@ -35,7 +35,7 @@ const PlaceAutocompleteInput = ({
       return;
     }
 
-    console.log(1);
+    console.log('GEOCODER FUNC TRIGGERED');
 
     geocoder
       .geocode({ location: coords })
@@ -55,7 +55,6 @@ const PlaceAutocompleteInput = ({
 
   // Set input to places autocomplete input
   useEffect(() => {
-    console.log(2);
     if (!placesLib || !inputRef.current) return;
 
     const options = {

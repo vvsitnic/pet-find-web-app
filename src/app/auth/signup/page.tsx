@@ -20,6 +20,7 @@ import {
 import CardWrapper from '@/components/auth/card-wrapper';
 import FormError from '@/components/form-error';
 import FormSuccess from '@/components/form-success';
+import { signup } from '@/actions/signup';
 
 const SignupPage = () => {
   const [success, setSuccess] = useState<string | undefined>('');
@@ -37,14 +38,14 @@ const SignupPage = () => {
   });
 
   function onSubmit(values: z.infer<typeof SignupSchema>) {
-    // setSuccess('');
-    // setError('');
-    // startTransition(() => {
-    //   signup(values).then(data => {
-    //     setError(data.error);
-    //     setSuccess(data.success);
-    //   });
-    // });
+    setSuccess('');
+    setError('');
+    startTransition(() => {
+      signup(values).then(data => {
+        setError(data.error);
+        setSuccess(data.success);
+      });
+    });
   }
 
   return (

@@ -20,9 +20,9 @@ import {
 import CardWrapper from '@/components/auth/card-wrapper';
 import FormError from '@/components/form-error';
 import FormSuccess from '@/components/form-success';
+import { login } from '@/actions/login';
 
 const LoginPage = () => {
-  const [success, setSuccess] = useState<string | undefined>('');
   const [error, setError] = useState<string | undefined>('');
   const [isPending, startTransition] = useTransition();
 
@@ -35,14 +35,12 @@ const LoginPage = () => {
   });
 
   function onSubmit(values: z.infer<typeof LoginSchema>) {
-    // setError('');
-    // setSuccess('');
-    // startTransition(() => {
-    //   login(values).then(data => {
-    //     setError(data.error);
-    //     setSuccess(data.success);
-    //   });
-    // });
+    setError('');
+    startTransition(() => {
+      login(values).then(data => {
+        setError(data?.error);
+      });
+    });
   }
 
   return (
@@ -80,7 +78,6 @@ const LoginPage = () => {
             )}
           />
           <FormError message={error} />
-          <FormSuccess message={success} />
           <Button
             type="submit"
             className="w-full bg-[#8a2be2] hover:bg-[#a155e8]"

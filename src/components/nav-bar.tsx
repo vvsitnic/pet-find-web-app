@@ -14,6 +14,8 @@ import {
 
 import { cn } from '@/lib/utils';
 
+import { signOut } from 'next-auth/react';
+
 const NavigationBar = () => {
   return (
     <header className="h-screen w-fit p-4 xl:w-[400px] flex flex-col shrink-0 border-r-[1px] border-[#d8d8d8]">
@@ -56,15 +58,20 @@ const NavigationBar = () => {
             icon={<PlusCircleIcon className="size-7" />}
           />
           <NavItem
-            href="/auth/login"
+            href="/settings"
             label="My account"
             icon={<UserCircleIcon className="size-7" />}
           />
           <li className="mb-3 rounded-lg hover:bg-[#d1c4e9] transition-colors mt-auto">
-            <Link href="/" className="p-4 text-base flex items-center gap-3">
+            <button
+              className="p-4 text-base flex items-center gap-3 cursor-pointer w-full h-full"
+              onClick={async () => {
+                await signOut();
+              }}
+            >
               <ArrowRightStartOnRectangleIcon className="size-7" />
               <p className="text-xl hidden xl:block">Logout</p>
-            </Link>
+            </button>
           </li>
         </ul>
       </nav>

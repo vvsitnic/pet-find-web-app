@@ -13,10 +13,11 @@ import {
 } from '@heroicons/react/24/outline';
 
 import { cn } from '@/lib/utils';
-
-import { signOut } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 
 const NavigationBar = () => {
+  const session = useSession();
+
   return (
     <header className="h-screen w-fit p-4 xl:w-[400px] flex flex-col shrink-0 border-r-[1px] border-[#d8d8d8]">
       <Link
@@ -58,16 +59,16 @@ const NavigationBar = () => {
             icon={<PlusCircleIcon className="size-7" />}
           />
           <NavItem
-            href="/settings"
+            href="/application/settings"
             label="My account"
             icon={<UserCircleIcon className="size-7" />}
           />
-          <li className="mb-3 rounded-lg hover:bg-[#d1c4e9] transition-colors mt-auto">
+          <li className="mb-3 mt-auto">
             <button
-              className="p-4 text-base flex items-center gap-3 cursor-pointer w-full h-full"
-              onClick={async () => {
-                await signOut();
-              }}
+              type="submit"
+              className="p-4 text-base flex items-center gap-3 cursor-pointer w-full h-full hover:bg-[#d1c4e9] rounded-lg disabled:text-gray-400 disabled:bg-white transition-colors"
+              onClick={() => signOut()}
+              disabled={session?.status !== 'authenticated'}
             >
               <ArrowRightStartOnRectangleIcon className="size-7" />
               <p className="text-xl hidden xl:block">Logout</p>

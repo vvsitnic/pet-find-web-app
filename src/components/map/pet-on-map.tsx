@@ -16,7 +16,15 @@ export default function PetOnMap({
       disableDefaultUI={true}
       clickableIcons={false}
     >
-      <AdvancedMarker />
+      <AdvancedMarker position={coords}>
+        <div className="relative">
+          <img
+            src="/map-marker.png"
+            className="h-14 absolute z-50 bottom-1/2 right-1/2 translate-x-1/2 pointer-events-none"
+          />
+          <div className="h-1 w-4 bg-black/80 blur-[2px] rounded-[100%] absolute z-40 bottom-1/2 right-1/2 translate-x-1/2 translate-y-1/2 pointer-events-none" />
+        </div>
+      </AdvancedMarker>
     </Map>
   );
 }

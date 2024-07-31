@@ -7,8 +7,14 @@ export const publicRoutes = [
   '/',
   '/application/pets-nearby',
   '/application/pets-on-map',
-  '/application/post-pet',
 ];
+
+/**
+ * An array of dynamic routes that are accessibleto the public
+ * These routes do not require authentication
+ * @type {string[]}
+ */
+export const publicDynamicRoutes = ['/application/pet'];
 
 /**
  * An array of routes that are used for authentication
@@ -28,4 +34,4 @@ export const apiAuthPrefix = '/api/auth';
  * The default redirect path after logging in
  * @type {string}
  */
-export const DEFAULT_REDIRECT = '/settings';
+export const DEFAULT_REDIRECT = '/application/settings';

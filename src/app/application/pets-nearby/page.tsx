@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { useCoords } from '@/hooks';
 
 import { Pet } from '@/pets';
+import { fetchPetsNearby } from '@/actions/pets';
 
 const PetsNearbyPage = () => {
   const [pets, setPets] = useState<Pet[]>([]);
@@ -15,15 +16,8 @@ const PetsNearbyPage = () => {
     if (!coords) return;
 
     const fetchPets = async () => {
-      const response = await fetch(
-        `http://localhost:2000/pets/nearby?lat=${coords.lat}&lng=${coords.lng}&d=10000&img=true`
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data);
-        setPets(data);
-      }
+      const data = await fetchPetsNearby(coords);
+      if (data) setPets(data);
     };
     fetchPets();
   }, [coords]);
@@ -43,7 +37,6 @@ const PetsNearbyPage = () => {
   );
 };
 
-//  overflow-hidden !!!!!
 const PetCard = ({ pet }: { pet: Pet }) => {
   return (
     <li className="aspect-[4/3] w-full">

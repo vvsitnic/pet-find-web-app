@@ -8,6 +8,7 @@ import { useDebounce, useCoords } from '@/hooks';
 import { Pet } from '@/pets';
 import { useToast } from '../ui/use-toast';
 import { ToastAction } from '../ui/toast';
+import { fetchPetsOnMap } from '@/actions/pets';
 
 interface Bounds {
   north: number;
@@ -68,23 +69,10 @@ export default function PetsOnMap() {
       }
       return;
     }
-    const fetchPets = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:2000/pets/on-map?bllat=${petsBounds.south}&bllng=${petsBounds.west}&urlat=${petsBounds.north}&urlng=${petsBounds.east}`
-        );
 
-        const data = await response.json();
-        console.log(data);
-        setPets(data);
-      } catch (error) {
-        toast({
-          variant: 'destructive',
-          title: 'Uh oh! Something went wrong.',
-          description: 'There was a problem fetching pets.',
-          action: <ToastAction altText="Try again">Try again</ToastAction>,
-        });
-      }
+    const fetchPets = async () => {
+      const data = await fetchPetsOnMap(petsBounds);
+      setPets(data);
     };
     fetchPets();
   }, [petsBounds, coords]);

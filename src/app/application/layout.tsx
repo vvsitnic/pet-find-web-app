@@ -1,4 +1,5 @@
 import NavigationBar from '@/components/nav-bar';
+import { SessionProvider } from 'next-auth/react';
 
 export default function ApplicationLayout({
   children,
@@ -7,7 +8,9 @@ export default function ApplicationLayout({
 }>) {
   return (
     <div className="h-screen w-full flex bg-white">
-      <NavigationBar />
+      <SessionProvider>
+        <NavigationBar />
+      </SessionProvider>
       <main className="h-screen flex-grow overflow-auto">{children}</main>
     </div>
   );

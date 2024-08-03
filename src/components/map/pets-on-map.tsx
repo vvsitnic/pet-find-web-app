@@ -8,7 +8,9 @@ import { useDebounce, useCoords } from '@/hooks';
 import { Pet } from '@/pets';
 import { useToast } from '../ui/use-toast';
 import { ToastAction } from '../ui/toast';
-import { fetchPetsOnMap } from '@/actions/pets';
+import { getPetsOnMap } from '@/actions/pets';
+
+import { useRouter } from 'next/navigation';
 
 interface Bounds {
   north: number;
@@ -61,6 +63,8 @@ export default function PetsOnMap() {
   const { coords, isLoading, isError } = useCoords();
   const { toast } = useToast();
 
+  const router = useRouter();
+
   useEffect(() => {
     if (!petsBounds) {
       if (coords) {
@@ -71,8 +75,10 @@ export default function PetsOnMap() {
     }
 
     const fetchPets = async () => {
-      const data = await fetchPetsOnMap(petsBounds);
-      setPets(data);
+      const data = await getPetsOnMap(petsBounds);
+      if (data) {
+        setPets(data);
+      }
     };
     fetchPets();
   }, [petsBounds, coords]);
@@ -121,7 +127,18 @@ export default function PetsOnMap() {
       }}
     >
       {pets.map(pet => (
-        <AdvancedMarker key={pet.id} position={pet.last_seen_location} />
+        <AdvancedMarker
+          key={pet.id}
+          position={pet.last_seen_location}
+          onClick={() => router.push(`/application/pet/${pet.id}`)}
+          className="relative"
+        >
+          <img
+            src="/pet-marker.png"
+            className="h-14 absolute z-50 bottom-1/2 right-1/2 translate-x-1/2"
+          />
+          <div className="h-1 w-4 bg-black/80 blur-[2px] rounded-[100%] absolute z-40 bottom-1/2 right-1/2 translate-x-1/2 translate-y-1/2 pointer-events-none" />
+        </AdvancedMarker>
       ))}
     </Map>
   );

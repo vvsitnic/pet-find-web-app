@@ -6,7 +6,8 @@ import React, { useEffect, useState } from 'react';
 import { useCoords } from '@/hooks';
 
 import { Pet } from '@/pets';
-import { fetchPetsNearby } from '@/actions/pets';
+import { getPetsNearby } from '@/actions/pets';
+import { FaceFrownIcon } from '@heroicons/react/24/outline';
 
 const PetsNearbyPage = () => {
   const [pets, setPets] = useState<Pet[]>([]);
@@ -16,8 +17,11 @@ const PetsNearbyPage = () => {
     if (!coords) return;
 
     const fetchPets = async () => {
-      const data = await fetchPetsNearby(coords);
-      if (data) setPets(data);
+      const data = await getPetsNearby(coords);
+      console.log(data);
+      if (data) {
+        setPets(data);
+      }
     };
     fetchPets();
   }, [coords]);
@@ -26,9 +30,18 @@ const PetsNearbyPage = () => {
     return <p>Please wait...</p>;
   }
 
+  if (pets.length === 0) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center text-center gap-3">
+        <FaceFrownIcon className="text-appPrimary size-12" />
+        <h2 className="text-3xl">Pets not found!</h2>
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-[1500px] mx-auto px-4 pt-4">
-      <ul className="grid md:grid-cols-2 gap-4 w-full">
+    <div className="max-w-[1450px] mx-auto px-4 pt-4">
+      <ul className="grid md:grid-cols-2 gap-x-8 gap-y-4  w-full">
         {pets.map(pet => (
           <PetCard key={pet.id} pet={pet} />
         ))}
@@ -39,15 +52,18 @@ const PetsNearbyPage = () => {
 
 const PetCard = ({ pet }: { pet: Pet }) => {
   return (
-    <li className="aspect-[4/3] w-full">
+    <li className="w-full">
       <Link
-        href={`/pet/${pet.id}`}
-        className="h-full w-full rounded-md flex flex-col overflow-hidden border"
+        href={`/application/pet/${pet.id}`}
+        className="h-full w-full rounded-lg flex flex-col overflow-hidden border group hover:bg-[#f5f0ff] transition-colors"
       >
-        <div className="flex-grow overflow-hidden border-b">
-          <img src={pet.image_url} className="w-full h-full object-cover" />
+        <div className="flex-grow overflow-hidden border-b aspect-[4/3] ">
+          <img
+            src={pet.image_url}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+          />
         </div>
-        <p className="text-5xl p-3 truncate shrink-0">{pet.name}</p>
+        <p className="text-4xl p-4 truncate shrink-0 font-medium">{pet.name}</p>
       </Link>
     </li>
   );

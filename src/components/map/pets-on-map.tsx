@@ -67,17 +67,27 @@ export default function PetsOnMap() {
 
   useEffect(() => {
     if (!petsBounds) {
-      if (coords) {
-        const newBounds = createBoundryFromCenter(coords);
-        setPetsBounds(newBounds);
-      }
+      const newBounds = createBoundryFromCenter(
+        coords || {
+          lat: 51.5074,
+          lng: -0.1278,
+        }
+      );
+      setPetsBounds(newBounds);
       return;
     }
 
     const fetchPets = async () => {
+      console.log('fetch');
       const data = await getPetsOnMap(petsBounds);
       if (data) {
         setPets(data);
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Something went wrong!',
+          description: 'Could not fetch pets.',
+        });
       }
     };
     fetchPets();

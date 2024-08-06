@@ -1,5 +1,10 @@
 'use server';
 
+import authConfig from '@/auth.config';
+import NextAuth from 'next-auth';
+
+// const {  } = NextAuth(authConfig);
+
 export interface Bounds {
   north: number;
   south: number;
@@ -25,7 +30,7 @@ export interface Pet {
 export const getPetsOnMap = async (bounds: Bounds) => {
   try {
     const response = await fetch(
-      `http://localhost:2000/pets/on-map?bllat=${bounds.south}&bllng=${bounds.west}&urlat=${bounds.north}&urlng=${bounds.east}`
+      `http://localhost:${process.env.PET_API_PORT}/pets/on-map?bllat=${bounds.south}&bllng=${bounds.west}&urlat=${bounds.north}&urlng=${bounds.east}`
     );
 
     if (!response.ok) {
@@ -42,7 +47,7 @@ export const getPetsOnMap = async (bounds: Bounds) => {
 export const getPetsNearby = async (coords: Coords) => {
   try {
     const response = await fetch(
-      `http://localhost:2000/pets/nearby?lat=${coords.lat}&lng=${coords.lng}&d=10000&img=true`
+      `http://localhost:${process.env.PET_API_PORT}/pets/nearby?lat=${coords.lat}&lng=${coords.lng}&d=10000&img=true`
     );
 
     if (!response.ok) {
@@ -58,7 +63,9 @@ export const getPetsNearby = async (coords: Coords) => {
 
 export const getPetById = async (id: string) => {
   try {
-    const response = await fetch(`http://localhost:2000/pets/${id}?img=true`);
+    const response = await fetch(
+      `http://localhost:${process.env.PET_API_PORT}/pets/${id}?img=true`
+    );
 
     if (!response.ok) {
       throw new Error();
@@ -74,7 +81,7 @@ export const getPetById = async (id: string) => {
 export const getPetOfUser = async (id: string) => {
   try {
     const response = await fetch(
-      `http://localhost:2000/pets-of-user/${id}?img=true`
+      `http://localhost:${process.env.PET_API_PORT}/pets/of-user/${id}`
     );
 
     if (!response.ok) {
@@ -84,6 +91,7 @@ export const getPetOfUser = async (id: string) => {
     const data = await response.json();
     return data as Pet[];
   } catch (error) {
+    console.log(error);
     return null;
   }
 };

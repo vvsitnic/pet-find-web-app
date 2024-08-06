@@ -21,6 +21,10 @@ export default auth(req => {
     nextUrl.pathname.startsWith(route)
   );
 
+  if (nextUrl.pathname === '/') {
+    return Response.redirect(new URL('/application', nextUrl));
+  }
+
   if (isApiAuthRoute) {
     return;
   }
@@ -35,9 +39,11 @@ export default auth(req => {
     }
     return;
   }
+
   if (!isLoggedIn && !isPublicRoute) {
     return Response.redirect(new URL('/auth/login', nextUrl));
   }
+
   return;
 });
 

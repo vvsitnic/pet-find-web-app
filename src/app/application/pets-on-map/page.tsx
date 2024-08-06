@@ -1,7 +1,13 @@
 import React from 'react';
 
+import type { Metadata } from 'next';
+
 import MapApiProvider from '@/components/map/map-api-provider';
 import PetsOnMap from '@/components/map/pets-on-map';
+
+export const metadata: Metadata = {
+  title: 'Pets on Map - PetFind',
+};
 
 const PetsOnMapPage = () => {
   return (

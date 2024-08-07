@@ -11,6 +11,7 @@ import { ToastAction } from '../ui/toast';
 import { getPetsOnMap } from '@/actions/pets';
 
 import { useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 
 interface Bounds {
   north: number;
@@ -59,11 +60,26 @@ const boundsOverflow = (boundsChild: Bounds, boundsParent: Bounds): boolean => {
 
 export default function PetsOnMap() {
   const [petsBounds, setPetsBounds] = useState<Bounds | null>(null);
-  const [pets, setPets] = useState<Pet[]>([]);
+  // const [pets, setPets] = useState<Pet[]>([]);
   const { coords, isLoading, isError } = useCoords();
   const { toast } = useToast();
 
   const router = useRouter();
+
+  const {
+    data: pets,
+    isFetching,
+    isError: queryIsError,
+    refetch,
+  } = useQuery({
+    queryKey: ['pets', 'on-map', petsBounds],
+    queryFn: () => {
+      if (petsBounds) return getPetsOnMap(petsBounds);
+    },
+    staleTime: Infinity,
+    retry: false,
+    enabled: false,
+  });
 
   useEffect(() => {
     if (!petsBounds) {
@@ -76,22 +92,11 @@ export default function PetsOnMap() {
       setPetsBounds(newBounds);
       return;
     }
-
-    const fetchPets = async () => {
-      console.log('fetch');
-      const data = await getPetsOnMap(petsBounds);
-      if (data) {
-        setPets(data);
-      } else {
-        toast({
-          variant: 'destructive',
-          title: 'Something went wrong!',
-          description: 'Could not fetch pets.',
-        });
-      }
-    };
-    fetchPets();
   }, [petsBounds, coords]);
+
+  useEffect(() => {
+    refetch();
+  }, [petsBounds]);
 
   useEffect(() => {
     if (isError) {
@@ -102,6 +107,21 @@ export default function PetsOnMap() {
       });
     }
   }, [isError]);
+
+  useEffect(() => {
+    if (queryIsError) {
+      toast({
+        variant: 'destructive',
+        title: 'Uh oh!',
+        description: 'Could not fetch data.',
+        // action: (
+        //   <ToastAction onClick={() => refetch()} altText="Reload to retry">
+        //     Retry
+        //   </ToastAction>
+        // ),
+      });
+    }
+  }, [queryIsError]);
 
   const changeBounds = useDebounce((_, bounds: Bounds) => {
     if (!petsBounds) return;
@@ -136,20 +156,21 @@ export default function PetsOnMap() {
         changeBounds(center, bounds);
       }}
     >
-      {pets.map(pet => (
-        <AdvancedMarker
-          key={pet.id}
-          position={pet.last_seen_location}
-          onClick={() => router.push(`/application/pet/${pet.id}`)}
-          className="relative"
-        >
-          <img
-            src="/pet-marker.png"
-            className="h-14 absolute z-50 bottom-1/2 right-1/2 translate-x-1/2"
-          />
-          <div className="h-1 w-4 bg-black/80 blur-[2px] rounded-[100%] absolute z-40 bottom-1/2 right-1/2 translate-x-1/2 translate-y-1/2 pointer-events-none" />
-        </AdvancedMarker>
-      ))}
+      {pets &&
+        pets.map(pet => (
+          <AdvancedMarker
+            key={pet.id}
+            position={pet.last_seen_location}
+            onClick={() => router.push(`/application/pet/${pet.id}`)}
+            className="relative"
+          >
+            <img
+              src="/pet-marker.png"
+              className="h-14 absolute z-50 bottom-1/2 right-1/2 translate-x-1/2"
+            />
+            <div className="h-1 w-4 bg-black/80 blur-[2px] rounded-[100%] absolute z-40 bottom-1/2 right-1/2 translate-x-1/2 translate-y-1/2 pointer-events-none" />
+          </AdvancedMarker>
+        ))}
     </Map>
   );
 }

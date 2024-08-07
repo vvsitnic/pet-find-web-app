@@ -40,7 +40,7 @@ export const getPetsOnMap = async (bounds: Bounds) => {
     const data = await response.json();
     return data as Pet[];
   } catch (error) {
-    return null;
+    throw new Error('An unexpected error occured!');
   }
 };
 
@@ -57,7 +57,7 @@ export const getPetsNearby = async (coords: Coords) => {
     const data = await response.json();
     return data as Pet[];
   } catch (error) {
-    return null;
+    throw new Error('An unexpected error occured!');
   }
 };
 
@@ -74,7 +74,7 @@ export const getPetById = async (id: string) => {
     const data = await response.json();
     return data as Pet;
   } catch (error) {
-    return null;
+    throw new Error('An unexpected error occured!');
   }
 };
 
@@ -92,7 +92,7 @@ export const getPetOfUser = async (id: string) => {
     return data as Pet[];
   } catch (error) {
     console.log(error);
-    return null;
+    throw new Error('An unexpected error occured!');
   }
 };
 

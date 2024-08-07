@@ -1,5 +1,6 @@
 import NavigationBar from '@/components/nav-bar';
 import { SessionProvider } from 'next-auth/react';
+import Providers from '@/components/provider';
 
 export default function ApplicationLayout({
   children,
@@ -11,7 +12,9 @@ export default function ApplicationLayout({
       <SessionProvider>
         <NavigationBar />
       </SessionProvider>
-      <main className="h-screen flex-grow overflow-auto">{children}</main>
+      <main className="h-screen flex-grow overflow-auto">
+        <Providers>{children}</Providers>
+      </main>
     </div>
   );
 }

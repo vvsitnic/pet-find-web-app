@@ -1,38 +1,38 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-
+import React, { useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useCoords } from '@/hooks';
 
 import PaginatedPetList from './paginated-pet-list';
-import { Pet } from '@/pets';
 import { getPetsNearby } from '@/actions/pets';
 
 import { FaceFrownIcon } from '@heroicons/react/24/outline';
 import { TriangleAlert } from 'lucide-react';
+import { Button } from './ui/button';
 
 const PetsNearby = () => {
-  const [pets, setPets] = useState<Pet[]>([]);
-  const { coords, isLoading, isError } = useCoords();
+  const { coords, isLoading, isError: coordsError } = useCoords();
+
+  const { data, isFetching, error, refetch } = useQuery({
+    queryKey: ['pets', 'nearby', coords],
+    queryFn: () => {
+      if (coords) return getPetsNearby(coords);
+    },
+    staleTime: Infinity,
+    retry: false,
+    enabled: false,
+  });
 
   useEffect(() => {
-    if (!coords) return;
-
-    const fetchPets = async () => {
-      const data = await getPetsNearby(coords);
-      console.log(data);
-      if (data) {
-        setPets(data);
-      }
-    };
-    fetchPets();
+    refetch();
   }, [coords]);
 
   if (isLoading) {
-    return <p>Please wait...</p>;
+    return null;
   }
 
-  if (isError) {
+  if (coordsError) {
     return (
       <div className="h-full flex flex-col items-center justify-center text-center gap-3">
         <TriangleAlert className="text-appPrimary size-12" />
@@ -44,7 +44,27 @@ const PetsNearby = () => {
     );
   }
 
-  if (pets.length === 0) {
+  if (isFetching) {
+    return <p>Pets LOADING...</p>;
+  }
+
+  if (error) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center text-center gap-3">
+        <TriangleAlert className="text-appPrimary size-12" />
+        <h2 className="text-3xl">Oops!</h2>
+        <p>{error.message}</p>
+        <Button
+          className="bg-[#8a2be2] hover:bg-[#a155e8]"
+          onClick={() => refetch()}
+        >
+          Retry
+        </Button>
+      </div>
+    );
+  }
+
+  if (data!.length === 0) {
     return (
       <div className="h-full flex flex-col items-center justify-center text-center gap-3">
         <FaceFrownIcon className="text-appPrimary size-12" />
@@ -53,7 +73,7 @@ const PetsNearby = () => {
     );
   }
 
-  return <PaginatedPetList pets={pets} />;
+  return <PaginatedPetList pets={data} />;
 };
 
 export default PetsNearby;

@@ -22,9 +22,9 @@ export default function Social() {
       >
         <FcGoogle className="h-5 w-5" />
       </Button>
-      <Button size="lg" className="w-full" variant="outline">
+      {/* <Button size="lg" className="w-full" variant="outline">
         <FaFacebook className="h-5 w-5" />
-      </Button>
+      </Button> */}
     </div>
   );
 }

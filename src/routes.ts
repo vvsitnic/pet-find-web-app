@@ -21,7 +21,7 @@ export const publicDynamicRoutes = ['/application/pet'];
  * These routes will redirect users to /settings
  * @type {string[]}
  */
-export const authRoutes = ['/auth/login', '/auth/signup'];
+export const authRoutes = ['/auth/login', '/auth/signup', '/auth/error'];
 
 /**
  * The prefix for api auth routes

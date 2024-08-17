@@ -1,5 +1,6 @@
 'use client';
 
+import { postPet } from '@/actions/pets';
 import ImageSelector from '@/components/image-selector';
 import SelectPlaceMap from '@/components/map/select-place-map';
 import React, { useState } from 'react';
@@ -15,11 +16,12 @@ const PostPetPage = () => {
         e.preventDefault();
         const form = e.target as HTMLFormElement;
         const formData = new FormData(form);
+
         const formDataObject = Object.fromEntries(formData.entries()) as {
           name: string;
           description: string;
           image: any;
-          last_seen_date: string;
+          date_lost: string;
           coords_lat: string;
           coords_lng: string;
           user_phone_num: string;
@@ -28,12 +30,33 @@ const PostPetPage = () => {
         const {
           name,
           description,
-          last_seen_date,
+          date_lost, // had to change because too lazy to rename in the api
           coords_lat,
           coords_lng,
           image,
           user_phone_num,
         } = formDataObject;
+
+        const dateInMilliseconds = new Date(date_lost).getTime();
+        const petData = {
+          name,
+          description,
+          coords: {
+            lat: +coords_lat,
+            lng: +coords_lng,
+          },
+          date_lost: dateInMilliseconds,
+          user_phone_num,
+        };
+
+        const petDataJSON = JSON.stringify(petData);
+        const petPostData = new FormData();
+        petPostData.append('petImg', image);
+        petPostData.append('petData', petDataJSON);
+
+        // const resp = postPet(petPostData);
+        // console.log(resp);
+        postPet(petPostData);
 
         // if (formDataObject.name.length > 50) {
         //   setNameIsLong(true);
@@ -48,16 +71,6 @@ const PostPetPage = () => {
         // } else {
         //   setDescriptionIsLong(false);
         // }
-
-        // const formatedData = {
-        //   name: formDataObject.name,
-        //   description: formDataObject.description,
-        //   coords: {
-        //     lat: +formDataObject.coords_lat,
-        //     lng: +formDataObject.coords_lng,
-        //   },
-        //   user_phone_num: formDataObject,
-        // };
       }}
     >
       <div className="mb-8">
@@ -100,15 +113,12 @@ const PostPetPage = () => {
         <ImageSelector />
       </div>
       <div className="mb-8">
-        <label
-          htmlFor="last_seen_date"
-          className="text-2xl block mb-2 font-bold"
-        >
+        <label htmlFor="date_lost" className="text-2xl block mb-2 font-bold">
           Pet last seen date
         </label>
         <input
-          id="last-seen-date"
-          name="last_seen_date"
+          id="date_lost"
+          name="date_lost"
           type="date"
           className="border rounded-lg block p-2 text-2xl w-full"
           required

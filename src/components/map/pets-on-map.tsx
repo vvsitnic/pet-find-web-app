@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { AdvancedMarker, Map } from '@vis.gl/react-google-maps';
 import { useDebounce, useCoords } from '@/hooks';
 
-import { Pet } from '@/pets';
 import { useToast } from '../ui/use-toast';
 import { ToastAction } from '../ui/toast';
 import { getPetsOnMap } from '@/actions/pets';
@@ -58,62 +57,57 @@ const boundsOverflow = (boundsChild: Bounds, boundsParent: Bounds): boolean => {
   return true;
 };
 
+const defaultCenterCoords = {
+  lat: 51.5074,
+  lng: -0.1278,
+};
+
 export default function PetsOnMap() {
+  const { coords, isLoading, isError: coordsError } = useCoords();
   const [petsBounds, setPetsBounds] = useState<Bounds | null>(null);
-  // const [pets, setPets] = useState<Pet[]>([]);
-  const { coords, isLoading, isError } = useCoords();
+
   const { toast } = useToast();
 
   const router = useRouter();
 
-  const {
-    data: pets,
-    isFetching,
-    isError: queryIsError,
-    refetch,
-  } = useQuery({
+  const { data: pets, isError: queryError } = useQuery({
     queryKey: ['pets', 'on-map', petsBounds],
-    queryFn: () => {
-      if (petsBounds) return getPetsOnMap(petsBounds);
-    },
-    staleTime: Infinity,
+    queryFn: () => getPetsOnMap(petsBounds!),
+    staleTime: 1000 * 60 * 60,
     retry: false,
-    enabled: false,
+    enabled: !!petsBounds,
   });
 
+  // If coords were, set create boundry
   useEffect(() => {
-    if (!petsBounds) {
-      const newBounds = createBoundryFromCenter(
-        coords || {
-          lat: 51.5074,
-          lng: -0.1278,
-        }
-      );
+    if (coords) {
+      const newBounds = createBoundryFromCenter(coords);
       setPetsBounds(newBounds);
-      return;
     }
-  }, [petsBounds, coords]);
+  }, [coords]);
 
+  // If coords access denied, create default boundry of 'defaultCenterCoords'
+  // For everything to work visiaully map component has to have that center as a backup
   useEffect(() => {
-    refetch();
-  }, [petsBounds]);
+    const newBounds = createBoundryFromCenter(defaultCenterCoords);
+    setPetsBounds(newBounds);
 
-  useEffect(() => {
-    if (isError) {
+    if (coordsError) {
       toast({
         variant: 'destructive',
         title: 'Uh oh!',
         description: 'Allow geolocation to see most relevant data.',
       });
     }
-  }, [isError]);
+  }, [coordsError]);
 
   useEffect(() => {
-    if (queryIsError) {
+    if (queryError) {
       toast({
         variant: 'destructive',
         title: 'Uh oh!',
         description: 'Could not fetch data.',
+        // Still unsure if I want for toast to have the retry button
         // action: (
         //   <ToastAction onClick={() => refetch()} altText="Reload to retry">
         //     Retry
@@ -121,7 +115,7 @@ export default function PetsOnMap() {
         // ),
       });
     }
-  }, [queryIsError]);
+  }, [queryError]);
 
   const changeBounds = useDebounce((_, bounds: Bounds) => {
     if (!petsBounds) return;
@@ -143,12 +137,7 @@ export default function PetsOnMap() {
       mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_ID}
       defaultZoom={13}
       minZoom={11}
-      defaultCenter={
-        coords || {
-          lat: 51.5074,
-          lng: -0.1278,
-        }
-      }
+      defaultCenter={coords || defaultCenterCoords}
       disableDefaultUI={true}
       clickableIcons={false}
       onCenterChanged={e => {

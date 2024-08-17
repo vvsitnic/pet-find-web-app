@@ -2,9 +2,12 @@ import React from 'react';
 import { auth, signOut } from '@/auth';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { getPetOfUser } from '@/actions/pets';
+import { deletePet, getPetOfUser } from '@/actions/pets';
 import { notFound } from 'next/navigation';
 import { PhoneIcon } from 'lucide-react';
+import DeletePetButton from '@/components/delete-pet-btn';
+
+export const revalidate = 3600;
 
 const SettingsPage = async () => {
   const session = await auth();
@@ -25,16 +28,32 @@ const SettingsPage = async () => {
         Post pet
       </Link>
       <div className="grid gap-4 w-full overflow-auto no-scrollbar pb-4">
-        {/* {pets?.map(pet => (
-          <div className="bg-gray-200 rounded-lg h-52 p-4 flex">
-            <div className="h-full aspect-square rounded-full bg-gray-400 shrink-0"></div>
-            <div className="ml-auto w-32 flex flex-col gap-3">
-              <div className="bg-gray-400 h-full rounded-md"></div>
-              <div className="bg-gray-400 h-full rounded-md"></div>
-            </div>
+        {pets?.map(pet => (
+          <div key={pet.id}>
+            <img
+              src={pet.image_url}
+              alt={`Photo of ${pet.name}`}
+              className="size-20"
+            />
+            <span>
+              <Link href={`/application/pet/${pet.id}`} className="mr-3">
+                {pet.name}
+              </Link>
+            </span>
+            <span>
+              <DeletePetButton petId={pet.id} />
+            </span>
           </div>
-        ))} */}
-        <div className="bg-gray-200 rounded-lg p-4 flex gap-3 flex-col sm:flex-row">
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default SettingsPage;
+
+/*
+<div className="bg-gray-200 rounded-lg p-4 flex gap-3 flex-col sm:flex-row">
           <div className="flex-grow flex gap-3">
             <img
               className="h-44 w-44 rounded-full object-cover shrink-0"
@@ -43,12 +62,12 @@ const SettingsPage = async () => {
             />
             <div className="flex-grow flex flex-col gap-2">
               <h1 className="text-5xl">Oscar</h1>
-              {/* <p className="flex-grow overflow-hidden">
+              <p className="flex-grow overflow-hidden">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos
                 accusamus magnam atque facere consectetur deserunt esse tempore,
                 cum, asperiores quam veritatis in repellendus accusantium libero
                 iusto dolorem rem! Aliquam, obcaecati!
-              </p> */}
+              </p>
               <div className="flex gap-2">
                 <PhoneIcon />
                 <p className="text-lg self-end">87871239</p>
@@ -62,9 +81,4 @@ const SettingsPage = async () => {
             Delete
           </Button>
         </div>
-      </div>
-    </div>
-  );
-};
-
-export default SettingsPage;
+*/

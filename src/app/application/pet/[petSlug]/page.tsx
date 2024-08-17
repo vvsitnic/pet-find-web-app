@@ -56,13 +56,6 @@ const PetPage = async ({ params }: { params: { petSlug: string } }) => {
           </MapApiProvider>
         </div>
       </div>
-      {/* <div>
-        <label className="text-2xl block mb-2 font-bold">Contact</label>
-        <div className="flex gap-2">
-          <PhoneIcon className="size-9" />
-          <p className="text-3xl mt-auto">{pet.user_phone_num}</p>
-        </div>
-      </div> */}
     </div>
   );
 };

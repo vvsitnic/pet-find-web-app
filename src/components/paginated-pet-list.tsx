@@ -65,20 +65,18 @@ const PaginatedPetList = ({
 
 const PetCard = ({ pet }: { pet: Pet }) => {
   return (
-    <li className="w-full">
-      <Link
-        href={`/application/pet/${pet.id}`}
-        className="h-full w-full rounded-lg flex flex-col overflow-hidden border group hover:bg-[#f5f0ff] transition-colors"
-      >
-        <div className="flex-grow overflow-hidden border-b aspect-[4/3] ">
-          <img
-            src={pet.image_url}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-          />
-        </div>
-        <p className="text-4xl p-4 truncate shrink-0 font-medium">{pet.name}</p>
-      </Link>
-    </li>
+    <Link
+      href={`/application/pet/${pet.id}`}
+      className="h-full w-full rounded-lg flex flex-col overflow-hidden border group hover:bg-[#f5f0ff] transition-colors"
+    >
+      <div className="flex-grow overflow-hidden border-b aspect-[4/3] ">
+        <img
+          src={pet.image_url}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+        />
+      </div>
+      <p className="text-4xl p-4 truncate shrink-0 font-medium">{pet.name}</p>
+    </Link>
   );
 };
 

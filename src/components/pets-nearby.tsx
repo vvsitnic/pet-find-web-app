@@ -16,17 +16,11 @@ const PetsNearby = () => {
 
   const { data, isFetching, error, refetch } = useQuery({
     queryKey: ['pets', 'nearby', coords],
-    queryFn: () => {
-      if (coords) return getPetsNearby(coords);
-    },
-    staleTime: Infinity,
+    queryFn: () => getPetsNearby(coords!),
+    staleTime: 1000 * 60 * 60,
     retry: false,
-    enabled: false,
+    enabled: !!coords,
   });
-
-  useEffect(() => {
-    refetch();
-  }, [coords]);
 
   if (isLoading) {
     return null;
@@ -64,7 +58,7 @@ const PetsNearby = () => {
     );
   }
 
-  if (data!.length === 0) {
+  if (data && data.length === 0) {
     return (
       <div className="h-full flex flex-col items-center justify-center text-center gap-3">
         <FaceFrownIcon className="text-appPrimary size-12" />

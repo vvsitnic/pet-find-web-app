@@ -7,6 +7,7 @@ import { useDebounce, useCoords } from '@/hooks';
 
 import MapApiProvider from './map-api-provider';
 import PlaceAutocompleteInput from './place-autocomplete-input';
+import LoadingCircle from '../loading-sircle';
 
 export default function SelectPlaceMap({
   mapWidth,
@@ -51,7 +52,11 @@ export default function SelectPlaceMap({
   }, 700);
 
   if (!currentCoords) {
-    return <p>Please wait...</p>;
+    return (
+      <div style={{ width: mapWidth, height: mapHeight }}>
+        <LoadingCircle />
+      </div>
+    );
   }
 
   const setProgrammaticallyChangedTrue = () => {

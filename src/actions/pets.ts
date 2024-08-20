@@ -116,7 +116,7 @@ export const postPet = async (petData: any) => {
   // }
 
   const data = await response.json();
-  return data;
+  return data.id as string;
 };
 
 export const deletePet = async (id: string) => {

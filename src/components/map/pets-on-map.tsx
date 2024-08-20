@@ -12,6 +12,9 @@ import { getPetsOnMap } from '@/actions/pets';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 
+import petMarkerStyles from './pet-marker.module.css';
+import LoadingCircle from '../loading-sircle';
+
 interface Bounds {
   north: number;
   south: number;
@@ -70,7 +73,11 @@ export default function PetsOnMap() {
 
   const router = useRouter();
 
-  const { data: pets, isError: queryError } = useQuery({
+  const {
+    data: pets,
+    isFetching,
+    isError: queryError,
+  } = useQuery({
     queryKey: ['pets', 'on-map', petsBounds],
     queryFn: () => getPetsOnMap(petsBounds!),
     staleTime: 1000 * 60 * 60,
@@ -89,10 +96,10 @@ export default function PetsOnMap() {
   // If coords access denied, create default boundry of 'defaultCenterCoords'
   // For everything to work visiaully map component has to have that center as a backup
   useEffect(() => {
-    const newBounds = createBoundryFromCenter(defaultCenterCoords);
-    setPetsBounds(newBounds);
-
     if (coordsError) {
+      const newBounds = createBoundryFromCenter(defaultCenterCoords);
+      setPetsBounds(newBounds);
+
       toast({
         variant: 'destructive',
         title: 'Uh oh!',
@@ -127,8 +134,8 @@ export default function PetsOnMap() {
     }
   }, 700);
 
-  if (isLoading) {
-    return <p>Please wait...</p>;
+  if (isLoading || isFetching) {
+    return <LoadingCircle />;
   }
 
   return (
@@ -146,12 +153,14 @@ export default function PetsOnMap() {
       }}
     >
       {pets &&
-        pets.map(pet => (
+        pets.map((pet, i) => (
           <AdvancedMarker
             key={pet.id}
             position={pet.last_seen_location}
             onClick={() => router.push(`/application/pet/${pet.id}`)}
             className="relative"
+            // className={`relative ${petMarkerStyles.marker}`}
+            // style={{ animationDelay: `${i * 40}ms` }}
           >
             <img
               src="/pet-marker.png"

@@ -11,19 +11,29 @@ import { FaceFrownIcon } from '@heroicons/react/24/outline';
 import { TriangleAlert } from 'lucide-react';
 import { Button } from './ui/button';
 
-const PetsNearby = () => {
-  const { coords, isLoading, isError: coordsError } = useCoords();
+import LoadingCircle from './loading-sircle';
 
-  const { data, isFetching, error, refetch } = useQuery({
+const PetsNearby = () => {
+  const {
+    coords,
+    isLoading: coordsLoading,
+    isError: coordsError,
+  } = useCoords();
+
+  const {
+    data,
+    isFetching,
+    isError: queryError,
+    refetch,
+  } = useQuery({
     queryKey: ['pets', 'nearby', coords],
     queryFn: () => getPetsNearby(coords!),
     staleTime: 1000 * 60 * 60,
-    retry: false,
     enabled: !!coords,
   });
 
-  if (isLoading) {
-    return null;
+  if (coordsLoading || isFetching) {
+    return <LoadingCircle />;
   }
 
   if (coordsError) {
@@ -38,16 +48,12 @@ const PetsNearby = () => {
     );
   }
 
-  if (isFetching) {
-    return <p>Pets LOADING...</p>;
-  }
-
-  if (error) {
+  if (queryError) {
     return (
       <div className="h-full flex flex-col items-center justify-center text-center gap-3">
         <TriangleAlert className="text-appPrimary size-12" />
         <h2 className="text-3xl">Oops!</h2>
-        <p>{error.message}</p>
+        <p>An unexpected error occured!</p>
         <Button
           className="bg-[#8a2be2] hover:bg-[#a155e8]"
           onClick={() => refetch()}

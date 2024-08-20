@@ -1,18 +1,25 @@
 'use client';
 
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+import { getQueryClient } from '@/components/provider';
 import { postPet } from '@/actions/pets';
 import ImageSelector from '@/components/image-selector';
 import SelectPlaceMap from '@/components/map/select-place-map';
-import React, { useState } from 'react';
 
 const PostPetPage = () => {
+  const router = useRouter();
+
   const [nameIsLong, setNameIsLong] = useState(false);
   const [descriptionIsLong, setDescriptionIsLong] = useState(false);
+
+  const queryClient = getQueryClient();
 
   return (
     <form
       className="px-4 py-10 mx-auto max-w-[1200px]"
-      onSubmit={e => {
+      onSubmit={async e => {
         e.preventDefault();
         const form = e.target as HTMLFormElement;
         const formData = new FormData(form);
@@ -56,8 +63,14 @@ const PostPetPage = () => {
 
         // const resp = postPet(petPostData);
         // console.log(resp);
-        postPet(petPostData);
+        const petId = await postPet(petPostData);
 
+        if (petId) {
+          await queryClient.invalidateQueries({
+            queryKey: ['pets'],
+          });
+          router.push(`/application/pet/${petId}`);
+        }
         // if (formDataObject.name.length > 50) {
         //   setNameIsLong(true);
         //   return;

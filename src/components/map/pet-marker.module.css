@@ -1,0 +1,14 @@
+.marker {
+  transform: scale(0);
+  animation: pop-up 0.3s ease-out forwards;
+}
+
+@keyframes pop-up {
+  0% {
+    transform: scale(0);
+  }
+
+  100% {
+    transform: scale(100%);
+  }
+}

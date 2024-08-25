@@ -5,7 +5,6 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { getQueryClient } from './provider';
 import { deletePet, getPetOfUser } from '@/actions/pets';
 
-import { TriangleAlert } from 'lucide-react';
 import { Button } from './ui/button';
 
 import { useToast } from './ui/use-toast';
@@ -20,7 +19,7 @@ const PetsOfUser = ({ userId }: { userId: string }) => {
 
   const {
     data: pets,
-    isFetching,
+    isLoading,
     isError: queryError,
     refetch,
   } = useQuery({
@@ -39,14 +38,17 @@ const PetsOfUser = ({ userId }: { userId: string }) => {
     onError: () => {},
   });
 
-  if (isFetching) {
-    return <LoadingCircle />;
+  if (isLoading) {
+    return (
+      <div className="h-1/2">
+        <LoadingCircle />
+      </div>
+    );
   }
 
   if (queryError) {
     return (
-      <div className="h-full flex flex-col items-center justify-center text-center gap-3">
-        <TriangleAlert className="text-appPrimary size-12" />
+      <div className="h-1/2 flex flex-col items-center justify-center text-center gap-3">
         <h2 className="text-3xl">Oops!</h2>
         <p>An unexpected error occured!</p>
         <Button
@@ -61,8 +63,7 @@ const PetsOfUser = ({ userId }: { userId: string }) => {
 
   if (pets && pets.length === 0) {
     return (
-      <div className="h-full flex flex-col items-center justify-center text-center gap-3">
-        {/* <FaceFrownIcon className="text-appPrimary size-12" /> */}
+      <div className="h-1/2 flex flex-col items-center justify-center text-center gap-3">
         <h2 className="text-3xl">No pets yet</h2>
       </div>
     );

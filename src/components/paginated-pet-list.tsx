@@ -32,10 +32,10 @@ const PaginatedPetList = ({
   const maxPages = Math.ceil(pets.length / maxPetsOnPage);
 
   return (
-    <div className="max-w-[1450px] mx-auto px-4 pt-4">
+    <div className="pb-1">
       <ul className="grid md:grid-cols-2 gap-x-8 gap-y-4 w-full mb-10">
         {petsOnPage.map(pet => (
-          <li key={pet.id}>
+          <li key={pet.id} className="overflow-hidden">
             <PetCard pet={pet} />
           </li>
         ))}
@@ -75,7 +75,14 @@ const PetCard = ({ pet }: { pet: Pet }) => {
           className="w-full h-full object-cover group-hover:scale-105 transition-transform"
         />
       </div>
-      <p className="text-4xl p-4 truncate shrink-0 font-medium">{pet.name}</p>
+      <div className="p-3 w-full overflow-hidden">
+        <p className="text-4xl mb-1 truncate shrink-0 font-medium">
+          {pet.name}
+        </p>
+        <p className="text-md truncate shrink-0 text-gray-500">
+          {pet.description}
+        </p>
+      </div>
     </Link>
   );
 };

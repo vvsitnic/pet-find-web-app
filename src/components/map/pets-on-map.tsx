@@ -77,11 +77,11 @@ export default function PetsOnMap() {
     data: pets,
     isFetching,
     isError: queryError,
+    refetch,
   } = useQuery({
     queryKey: ['pets', 'on-map', petsBounds],
     queryFn: () => getPetsOnMap(petsBounds!),
     staleTime: 1000 * 60 * 60,
-    retry: false,
     enabled: !!petsBounds,
   });
 
@@ -115,11 +115,11 @@ export default function PetsOnMap() {
         title: 'Uh oh!',
         description: 'Could not fetch data.',
         // Still unsure if I want for toast to have the retry button
-        // action: (
-        //   <ToastAction onClick={() => refetch()} altText="Reload to retry">
-        //     Retry
-        //   </ToastAction>
-        // ),
+        action: (
+          <ToastAction onClick={() => refetch()} altText="Reload to retry">
+            Retry
+          </ToastAction>
+        ),
       });
     }
   }, [queryError]);
@@ -134,7 +134,7 @@ export default function PetsOnMap() {
     }
   }, 700);
 
-  if (isLoading || isFetching) {
+  if (isLoading) {
     return <LoadingCircle />;
   }
 

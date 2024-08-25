@@ -18,6 +18,9 @@ const config = {
       },
     },
     extend: {
+      screens: {
+        'h-sm': { raw: '(min-height: 480px)' },
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

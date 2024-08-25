@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useCoords } from '@/hooks';
 
@@ -8,12 +8,14 @@ import PaginatedPetList from './paginated-pet-list';
 import { getPetsNearby } from '@/actions/pets';
 
 import { FaceFrownIcon } from '@heroicons/react/24/outline';
-import { TriangleAlert } from 'lucide-react';
+import { SearchIcon, TriangleAlert } from 'lucide-react';
 import { Button } from './ui/button';
 
 import LoadingCircle from './loading-sircle';
 
 const PetsNearby = () => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const {
     coords,
     isLoading: coordsLoading,
@@ -27,12 +29,12 @@ const PetsNearby = () => {
     refetch,
   } = useQuery({
     queryKey: ['pets', 'nearby', coords],
-    queryFn: () => getPetsNearby(coords!),
+    queryFn: () => getPetsNearby(coords!, inputRef.current?.value || ''),
     staleTime: 1000 * 60 * 60,
     enabled: !!coords,
   });
 
-  if (coordsLoading || isFetching) {
+  if (coordsLoading) {
     return <LoadingCircle />;
   }
 
@@ -48,8 +50,10 @@ const PetsNearby = () => {
     );
   }
 
+  let component;
+
   if (queryError) {
-    return (
+    component = (
       <div className="h-full flex flex-col items-center justify-center text-center gap-3">
         <TriangleAlert className="text-appPrimary size-12" />
         <h2 className="text-3xl">Oops!</h2>
@@ -64,8 +68,12 @@ const PetsNearby = () => {
     );
   }
 
+  if (isFetching) {
+    component = <LoadingCircle />;
+  }
+
   if (data && data.length === 0) {
-    return (
+    component = (
       <div className="h-full flex flex-col items-center justify-center text-center gap-3">
         <FaceFrownIcon className="text-appPrimary size-12" />
         <h2 className="text-3xl">Pets not found!</h2>
@@ -73,7 +81,31 @@ const PetsNearby = () => {
     );
   }
 
-  return <PaginatedPetList pets={data} />;
+  return (
+    <div className="max-w-[1450px] mx-auto px-4 pt-3 h-full">
+      <div className="flex mb-8">
+        <input
+          ref={inputRef}
+          type="text"
+          className="text-3xl p-3 border rounded-l-xl grow min-w-0"
+          onKeyDown={e => {
+            if (e.key === 'Enter') refetch();
+          }}
+        />
+        <button
+          className="w-20 flex items-center justify-center rounded-r-xl bg-appPrimary hover:bg-[#a155e8] transition-colors"
+          onClick={() => refetch()}
+        >
+          <SearchIcon className="text-white size-8" />
+        </button>
+      </div>
+      {component ? (
+        <div className="h-1/2">{component}</div>
+      ) : (
+        <PaginatedPetList pets={data} />
+      )}
+    </div>
+  );
 };
 
 export default PetsNearby;

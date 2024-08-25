@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -15,34 +14,13 @@ import {
 import { cn } from '@/lib/utils';
 import { useSession, signOut } from 'next-auth/react';
 
-const NavigationBar = () => {
+const NavigationBarMobile = () => {
   const session = useSession();
 
   return (
-    <header className="h-screen w-fit p-4 xl:w-[400px] hidden sm:flex flex-col shrink-0 border-r-[1px] border-[#d8d8d8]">
-      <Link
-        href="/"
-        className="hidden h-sm:flex items-center justify-center mt-2 mb-4 h-[70px]"
-      >
-        <Image
-          height={70}
-          width={335}
-          src="/petfind-logo.png"
-          alt="PetFind Logo"
-          className="hidden xl:block"
-          priority
-        />
-        <Image
-          height={60}
-          width={60}
-          src="/petfind-icon-small.png"
-          alt="PetFind Logo"
-          className="block xl:hidden"
-          priority
-        />
-      </Link>
-      <nav className="grow">
-        <ul className="list-none h-full flex flex-col gap-2">
+    <header className="p-2 h-min w-full block sm:hidden border-t-[1px] border-[#d8d8d8] order-2">
+      <nav>
+        <ul className="list-none w-full flex justify-between">
           <NavItem
             href="/application/pets-nearby"
             label="Pets nearby"
@@ -108,4 +86,4 @@ export const NavItem = ({ href, label, icon, className }: NavItemProps) => {
   );
 };
 
-export default NavigationBar;
+export default NavigationBarMobile;

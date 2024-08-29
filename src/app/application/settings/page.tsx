@@ -10,11 +10,8 @@ const SettingsPage = async () => {
 
   if (!session) return notFound();
 
-  // const pets = await getPetOfUser(session.user.id!);
-  // console.log(pets);
-
   return (
-    <div className="max-w-[1400px] px-4 pt-6 mx-auto flex flex-col h-screen">
+    <div className="max-w-[1400px] px-4 pt-6 mx-auto flex flex-col h-full">
       <h1 className="text-5xl mb-1">{session.user.name}</h1>
       <p className="text-gray-600 mb-8">signed as {session.user.email}</p>
       <PetsOfUser userId={session.user.id!} />

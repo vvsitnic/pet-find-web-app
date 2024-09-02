@@ -106,7 +106,7 @@ export default function PetsOnMap() {
         description: 'Allow geolocation to see most relevant data.',
       });
     }
-  }, [coordsError]);
+  }, [coordsError, toast]);
 
   useEffect(() => {
     if (queryError) {
@@ -122,7 +122,7 @@ export default function PetsOnMap() {
         ),
       });
     }
-  }, [queryError]);
+  }, [queryError, toast, refetch]);
 
   const changeBounds = useDebounce((_, bounds: Bounds) => {
     if (!petsBounds) return;

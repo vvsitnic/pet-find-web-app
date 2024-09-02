@@ -5,13 +5,11 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 const PlaceAutocompleteInput = ({
   coords,
-  setProgrammaticallyChangedTrue,
-  setProgrammaticallyChangedFalse,
+  setProgrammaticallyChanged,
   programmaticallyChanged,
 }: {
   coords: { lng: number; lat: number } | null;
-  setProgrammaticallyChangedTrue: () => void;
-  setProgrammaticallyChangedFalse: () => void;
+  setProgrammaticallyChanged: (arg: boolean) => void;
   programmaticallyChanged: boolean;
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -31,7 +29,7 @@ const PlaceAutocompleteInput = ({
     if (!geocoder || !map || !coords) return;
 
     if (programmaticallyChanged) {
-      setProgrammaticallyChangedFalse();
+      setProgrammaticallyChanged(false);
       return;
     }
 
@@ -51,7 +49,13 @@ const PlaceAutocompleteInput = ({
       .catch(() => {
         console.error('Error geocoding coordinates:');
       });
-  }, [geocoder, coords, map]);
+  }, [
+    geocoder,
+    coords,
+    map,
+    programmaticallyChanged,
+    setProgrammaticallyChanged,
+  ]);
 
   // Set input to places autocomplete input
   useEffect(() => {
@@ -73,10 +77,10 @@ const PlaceAutocompleteInput = ({
 
       if (!place.geometry) return;
 
-      setProgrammaticallyChangedTrue();
+      setProgrammaticallyChanged(true);
       map.fitBounds(place.geometry.viewport);
     });
-  }, [map, placeAutocomplete]);
+  }, [map, placeAutocomplete, setProgrammaticallyChanged]);
 
   return (
     <input

@@ -72,8 +72,7 @@ export default function SelectPlaceMap({
       <MapApiProvider>
         <PlaceAutocompleteInput
           coords={currentCoords}
-          setProgrammaticallyChangedTrue={setProgrammaticallyChangedTrue}
-          setProgrammaticallyChangedFalse={setProgrammaticallyChangedFalse}
+          setProgrammaticallyChanged={setProgrammaticallyChanged}
           programmaticallyChanged={programmaticallyChanged}
         />
         <div className="rounded-b-lg overflow-hidden relative">

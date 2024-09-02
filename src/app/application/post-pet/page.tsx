@@ -8,11 +8,39 @@ import { postPet } from '@/actions/pets';
 import ImageSelector from '@/components/image-selector';
 import SelectPlaceMap from '@/components/map/select-place-map';
 
+import { z, ZodError } from 'zod';
+
+const MAX_FILE_SIZE = 5000000;
+const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
+const petSchema = z.object({
+  name: z
+    .string()
+    .max(50, 'Name can`t exceed 50 characters')
+    .min(1, 'Name is required'),
+  description: z
+    .string()
+    .max(3500, 'Description can`t exceed 3500 character')
+    .min(1, 'Description is required'),
+  image: z
+    .any()
+    .refine(file => file?.size <= MAX_FILE_SIZE, `Max image size is 5MB.`)
+    .refine(
+      file => ACCEPTED_IMAGE_TYPES.includes(file?.type),
+      'Only .jpg, .jpeg and .png formats are supported.'
+    ),
+  coords_lat: z.coerce.number().min(-90).max(90),
+  coords_lng: z.coerce.number().min(-180).max(180),
+  date_lost: z.string().date(),
+  // .refine(date => {
+  //   return new Date(date) < new Date(Date.now());
+  // }, 'The date must be before today'),
+  user_phone_num: z.string(),
+});
+
 const PostPetPage = () => {
   const router = useRouter();
 
-  const [nameIsLong, setNameIsLong] = useState(false);
-  const [descriptionIsLong, setDescriptionIsLong] = useState(false);
+  const [issues, setIssues] = useState<ZodError | null>(null);
 
   const queryClient = getQueryClient();
 
@@ -34,15 +62,22 @@ const PostPetPage = () => {
           user_phone_num: string;
         };
 
+        const parsedData = petSchema.safeParse(formDataObject);
+
+        if (!parsedData.success) {
+          setIssues(parsedData.error);
+          return;
+        }
+
         const {
           name,
           description,
-          date_lost, // had to change because too lazy to rename in the api
+          date_lost,
           coords_lat,
           coords_lng,
           image,
           user_phone_num,
-        } = formDataObject;
+        } = parsedData.data;
 
         const dateInMilliseconds = new Date(date_lost).getTime();
         const petData = {
@@ -63,27 +98,19 @@ const PostPetPage = () => {
 
         // const resp = postPet(petPostData);
         // console.log(resp);
-        const petId = await postPet(petPostData);
 
-        if (petId) {
-          await queryClient.invalidateQueries({
-            queryKey: ['pets'],
-          });
-          router.push(`/application/pet/${petId}`);
+        try {
+          const petId = await postPet(petPostData);
+
+          if (petId) {
+            await queryClient.invalidateQueries({
+              queryKey: ['pets'],
+            });
+            router.push(`/application/pet/${petId}`);
+          }
+        } catch (error) {
+          console.error('ERROR: ', error);
         }
-        // if (formDataObject.name.length > 50) {
-        //   setNameIsLong(true);
-        //   return;
-        // } else {
-        //   setNameIsLong(false);
-        // }
-
-        // if (formDataObject.description.length > 3000) {
-        //   setDescriptionIsLong(true);
-        //   return;
-        // } else {
-        //   setDescriptionIsLong(false);
-        // }
       }}
     >
       <div className="mb-8">
@@ -95,13 +122,9 @@ const PostPetPage = () => {
           name="name"
           type="text"
           className="border rounded-lg block p-2 text-2xl w-full mb-2"
+          maxLength={50}
           required
         />
-        {nameIsLong && (
-          <label className="text-destructive">
-            Name can't exceed 50 characters
-          </label>
-        )}
       </div>
       <div className="mb-8">
         <label htmlFor="description" className="text-2xl block mb-2 font-bold">
@@ -111,13 +134,9 @@ const PostPetPage = () => {
           id="description"
           name="description"
           className="border rounded-lg block p-2 text-2xl w-full h-96"
+          maxLength={3500}
           required
         />
-        {descriptionIsLong && (
-          <label className="text-destructive">
-            Description can't exceed 3000 characters
-          </label>
-        )}
       </div>
       <div className="mb-8">
         <label htmlFor="image" className="text-2xl block mb-2 font-bold">
@@ -161,6 +180,10 @@ const PostPetPage = () => {
           required
         />
       </div>
+      {issues &&
+        issues.issues.map(issue => (
+          <p className="text-destructive mb-2">{issue.message}</p>
+        ))}
       <button
         type="submit"
         className="w-full text-white p-3 rounded-md bg-[#8a2be2] hover:bg-[#a155e8] transition-colors text-xl"

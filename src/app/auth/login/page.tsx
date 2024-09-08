@@ -80,7 +80,7 @@ const LoginPage = () => {
           <FormError message={error} />
           <Button
             type="submit"
-            className="w-full bg-[#8a2be2] hover:bg-[#a155e8]"
+            className="w-full bg-appPrimary hover:bg-appHover1"
             disabled={isPending}
           >
             Login

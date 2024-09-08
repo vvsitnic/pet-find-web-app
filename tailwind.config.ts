@@ -56,6 +56,8 @@ const config = {
           foreground: 'hsl(var(--card-foreground))',
         },
         appPrimary: '#8a2be2',
+        appHover1: '#a155e8',
+        appHover2: '#d1c4e9',
       },
       borderRadius: {
         lg: 'var(--radius)',

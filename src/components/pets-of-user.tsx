@@ -12,7 +12,7 @@ import { useToast } from './ui/use-toast';
 import LoadingCircle from './loading-sircle';
 import Link from 'next/link';
 
-import { Trash2Icon, ExternalLinkIcon } from 'lucide-react';
+import { Trash2Icon, ExternalLinkIcon, PlusCircleIcon } from 'lucide-react';
 
 import {
   AlertDialog,
@@ -71,7 +71,7 @@ const PetsOfUser = ({ userId }: { userId: string }) => {
         <h2 className="text-3xl">Oops!</h2>
         <p>An unexpected error occured!</p>
         <Button
-          className="bg-[#8a2be2] hover:bg-[#a155e8]"
+          className="bg-appPrimary hover:bg-appHover1"
           onClick={() => refetch()}
         >
           Retry
@@ -92,9 +92,10 @@ const PetsOfUser = ({ userId }: { userId: string }) => {
     pets!.length < 10 ? (
       <Link
         href="/application/post-pet"
-        className="h-16 text-lg mb-8 bg-[#8a2be2] hover:bg-[#a155e8] text-white rounded-lg flex items-center justify-center transition-colors"
+        className="px-2 py-3 text-xl mb-8 bg-appPrimary hover:bg-appHover1 text-white rounded-lg flex items-center justify-center transition-colors"
       >
-        Post pet
+        <PlusCircleIcon className="mr-2" />
+        <span>Post pet</span>
       </Link>
     ) : (
       <p>Limit reached!</p>
@@ -113,19 +114,7 @@ const PetsOfUser = ({ userId }: { userId: string }) => {
             />
             <div>
               <h2 className="text-4xl mb-3">{pet.name}</h2>
-              <p className="text-slate-600 line-clamp-3">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Repudiandae quibusdam distinctio ipsa dolorum incidunt sed hic
-                iure aspernatur temporibus? Ab impedit excepturi natus adipisci
-                unde, illo quos perferendis quo in.Lorem ipsum dolor sit amet
-                consectetur adipisicing elit. Repudiandae quibusdam distinctio
-                ipsa dolorum incidunt sed hic iure aspernatur temporibus? Ab
-                impedit excepturi natus adipisci unde, illo quos perferendis quo
-                in.Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Repudiandae quibusdam distinctio ipsa dolorum incidunt sed hic
-                iure aspernatur temporibus? Ab impedit excepturi natus adipisci
-                unde, illo quos perferendis quo in.
-              </p>
+              <p className="text-slate-600 line-clamp-3">{pet.description}</p>
             </div>
 
             <div className="absolute right-0 top-0 flex">
@@ -151,7 +140,10 @@ const PetsOfUser = ({ userId }: { userId: string }) => {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => mutate(pet.id)}>
+                    <AlertDialogAction
+                      onClick={() => mutate(pet.id)}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
                       Delete
                     </AlertDialogAction>
                   </AlertDialogFooter>

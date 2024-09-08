@@ -59,7 +59,7 @@ const PetsNearby = () => {
         <h2 className="text-3xl">Oops!</h2>
         <p>An unexpected error occured!</p>
         <Button
-          className="bg-[#8a2be2] hover:bg-[#a155e8]"
+          className="bg-appPrimary hover:bg-appHover1"
           onClick={() => refetch()}
         >
           Retry
@@ -93,7 +93,7 @@ const PetsNearby = () => {
           }}
         />
         <button
-          className="w-20 flex items-center justify-center rounded-r-xl bg-appPrimary hover:bg-[#a155e8] transition-colors"
+          className="w-20 flex items-center justify-center rounded-r-xl bg-appPrimary hover:bg-appHover1 transition-colors"
           onClick={() => refetch()}
         >
           <SearchIcon className="text-white size-8" />

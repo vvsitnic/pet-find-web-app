@@ -44,7 +44,7 @@ const NavigationBarMobile = () => {
           <li className="mb-3 mt-auto">
             <button
               type="submit"
-              className="p-4 text-base flex items-center gap-3 cursor-pointer w-full h-full hover:bg-[#d1c4e9] rounded-lg disabled:text-gray-400 disabled:bg-white transition-colors"
+              className="p-4 text-base flex items-center gap-3 cursor-pointer w-full h-full hover:bg-appHover2 rounded-lg disabled:text-gray-400 disabled:bg-white transition-colors"
               onClick={() => signOut()}
               disabled={session?.status !== 'authenticated'}
             >
@@ -74,7 +74,7 @@ export const NavItem = ({ href, label, icon, className }: NavItemProps) => {
         href={href}
         className={cn(
           `p-4 text-base flex items-center gap-3 rounded-lg transition-colors ${
-            isHrefPath ? 'text-white bg-[#8a2be2]' : 'hover:bg-[#d1c4e9]'
+            isHrefPath ? 'text-white bg-appPrimary' : 'hover:bg-appHover2'
           }`,
           className
         )}

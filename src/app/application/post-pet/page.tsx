@@ -34,7 +34,7 @@ const petSchema = z.object({
   // .refine(date => {
   //   return new Date(date) < new Date(Date.now());
   // }, 'The date must be before today'),
-  user_phone_num: z.string(),
+  user_phone_num: z.string().min(1, 'Phone number is required'),
 });
 
 const PostPetPage = () => {

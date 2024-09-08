@@ -8,10 +8,23 @@ import { deletePet, getPetOfUser } from '@/actions/pets';
 import { Button } from './ui/button';
 
 import { useToast } from './ui/use-toast';
-import { ToastAction } from './ui/toast';
 
 import LoadingCircle from './loading-sircle';
 import Link from 'next/link';
+
+import { Trash2Icon, ExternalLinkIcon } from 'lucide-react';
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 const PetsOfUser = ({ userId }: { userId: string }) => {
   const queryClient = getQueryClient();
@@ -35,7 +48,13 @@ const PetsOfUser = ({ userId }: { userId: string }) => {
         queryKey: ['pets'],
       });
     },
-    onError: () => {},
+    onError: () => {
+      toast({
+        variant: 'destructive',
+        title: 'Oops!',
+        description: `An aunexpected error occured while deleting.`,
+      });
+    },
   });
 
   if (isLoading) {
@@ -73,7 +92,7 @@ const PetsOfUser = ({ userId }: { userId: string }) => {
     pets!.length < 10 ? (
       <Link
         href="/application/post-pet"
-        className="h-16 text-lg mb-4 bg-[#8a2be2] hover:bg-[#a155e8] text-white rounded-lg flex items-center justify-center transition-colors"
+        className="h-16 text-lg mb-8 bg-[#8a2be2] hover:bg-[#a155e8] text-white rounded-lg flex items-center justify-center transition-colors"
       >
         Post pet
       </Link>
@@ -84,41 +103,61 @@ const PetsOfUser = ({ userId }: { userId: string }) => {
   return (
     <>
       {pets && postBtn}
-      <div className="grid gap-4 w-full overflow-auto no-scrollbar pb-4">
+      <div className="grid gap-10 w-full overflow-auto no-scrollbar pb-4">
         {pets?.map(pet => (
-          <div key={pet.id}>
+          <div key={pet.id} className="relative flex gap-4">
             <img
               src={pet.image_url}
               alt={`Photo of ${pet.name}`}
-              className="size-20"
+              className="h-32 rounded-sm"
             />
-            <span>
-              <Link href={`/application/pet/${pet.id}`} className="mr-3">
-                {pet.name}
-              </Link>
-            </span>
-            <span>
-              <button
-                onClick={() =>
-                  toast({
-                    variant: 'destructive',
-                    title: 'Are you sure?',
-                    description: `Pet ${pet.name} will be deleted permanently.`,
-                    action: (
-                      <ToastAction
-                        onClick={() => mutate(pet.id)}
-                        altText="Delete"
-                      >
-                        Delete
-                      </ToastAction>
-                    ),
-                  })
-                }
-                className="text-destructive"
+            <div>
+              <h2 className="text-4xl mb-3">{pet.name}</h2>
+              <p className="text-slate-600 line-clamp-3">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Repudiandae quibusdam distinctio ipsa dolorum incidunt sed hic
+                iure aspernatur temporibus? Ab impedit excepturi natus adipisci
+                unde, illo quos perferendis quo in.Lorem ipsum dolor sit amet
+                consectetur adipisicing elit. Repudiandae quibusdam distinctio
+                ipsa dolorum incidunt sed hic iure aspernatur temporibus? Ab
+                impedit excepturi natus adipisci unde, illo quos perferendis quo
+                in.Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Repudiandae quibusdam distinctio ipsa dolorum incidunt sed hic
+                iure aspernatur temporibus? Ab impedit excepturi natus adipisci
+                unde, illo quos perferendis quo in.
+              </p>
+            </div>
+
+            <div className="absolute right-0 top-0 flex">
+              <Link
+                className="block w-fit h-fit m-1 p-2 rounded-md bg-slate-200 hover:bg-slate-300 transition-colors"
+                href={`/application/pet/${pet.id}`}
               >
-                Delete
-              </button>
-            </span>
+                <ExternalLinkIcon className="size-8" />
+              </Link>
+              <AlertDialog>
+                <AlertDialogTrigger className="p-2 m-1 rounded-md bg-slate-200 hover:bg-slate-300 transition-colors">
+                  <Trash2Icon className="size-8" />
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This pet will permanently be
+                      deleted permanently.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => mutate(pet.id)}>
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           </div>
         ))}
       </div>

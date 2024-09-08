@@ -182,7 +182,9 @@ const PostPetPage = () => {
       </div>
       {issues &&
         issues.issues.map(issue => (
-          <p className="text-destructive mb-2">{issue.message}</p>
+          <p className="text-destructive mb-2" key={issue.message}>
+            {issue.message}
+          </p>
         ))}
       <button
         type="submit"

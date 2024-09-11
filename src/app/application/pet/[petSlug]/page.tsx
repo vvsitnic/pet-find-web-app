@@ -21,7 +21,7 @@ const PetPage = async ({ params }: { params: { petSlug: string } }) => {
 
   // Thx ChatGPT for the page style
   return (
-    <div className="max-w-[1200px] mx-auto my-10 p-6">
+    <div className="max-w-[1200px] mx-auto my-7 p-6">
       {/* Header: Pet's Name */}
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold text-gray-800">{pet.name}</h1>
@@ -31,9 +31,9 @@ const PetPage = async ({ params }: { params: { petSlug: string } }) => {
       {/* Main Content */}
       <div className="flex flex-col md:flex-row gap-8">
         {/* Pet's Photo */}
-        <div className="md:w-1/2 flex justify-center">
+        <div className="md:w-1/2">
           <img
-            className="w-full rounded-lg shadow-md aspect-[4/3] h-full"
+            className="rounded-lg shadow-md w-full aspect-[4/3]"
             src={pet.image_url}
             alt={`Photo of lost pet ${pet.name}`}
           />

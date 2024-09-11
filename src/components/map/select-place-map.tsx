@@ -59,14 +59,6 @@ export default function SelectPlaceMap({
     );
   }
 
-  const setProgrammaticallyChangedTrue = () => {
-    setProgrammaticallyChanged(true);
-  };
-
-  const setProgrammaticallyChangedFalse = () => {
-    setProgrammaticallyChanged(false);
-  };
-
   return (
     <>
       <MapApiProvider>

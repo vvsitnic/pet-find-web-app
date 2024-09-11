@@ -84,7 +84,7 @@ const PlaceAutocompleteInput = ({
 
   return (
     <input
-      className="border rounded-t-lg block p-2 text-2xl w-full"
+      className="border rounded-t-xl block p-4 text-2xl w-full"
       ref={inputRef}
       id="place-autocomplete"
     />

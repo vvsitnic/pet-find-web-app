@@ -52,7 +52,7 @@ const PetsOfUser = ({ userId }: { userId: string }) => {
       toast({
         variant: 'destructive',
         title: 'Oops!',
-        description: `An aunexpected error occured while deleting.`,
+        description: `An unexpected error occured while deleting.`,
       });
     },
   });

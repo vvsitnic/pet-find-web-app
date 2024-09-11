@@ -3,8 +3,6 @@ import { auth } from '@/auth';
 import { notFound } from 'next/navigation';
 import PetsOfUser from '@/components/pets-of-user';
 
-export const revalidate = 3600;
-
 const SettingsPage = async () => {
   const session = await auth();
 
